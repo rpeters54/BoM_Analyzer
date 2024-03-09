@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>caller &mdash; BoM Analyzer 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BoM Analyzer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../helper.html">Helper Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BoM Analyzer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">caller</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for caller</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">data.preprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">data.archive</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">analysis.cluster</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">analysis.optimization</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">analysis.outlier_detection</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">visualization.graph</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="c1"># CALLER FUNCTIONS HERE</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Processing Functions</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="run_sentence_transform">
+<a class="viewcode-back" href="../api.html#caller.run_sentence_transform">[docs]</a>
+<span class="k">def</span> <span class="nf">run_sentence_transform</span><span class="p">(</span>
+        <span class="n">csv_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
+        <span class="n">load_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs sentence-level semantic similarity analysis on data from a CSV file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        csv_path (str): Path to the CSV file containing the data.</span>
+<span class="sd">            Required headers: &#39;SERNUM&#39;,&#39;PCA&#39;,&#39;CPN_1&#39;,&#39;DateCode_1&#39;,&#39;LOTCODE_1&#39;,&#39;MPN_1&#39;,&#39;RD_1&#39;, &#39;HWRMA&#39;.</span>
+<span class="sd">        device (str): Device to use for sentence transformation. Defaults to &#39;cpu&#39;.</span>
+<span class="sd">        load_path (Optional[str]): Path to a NumPy file containing archived</span>
+<span class="sd">            data to load instead of preprocessing.</span>
+<span class="sd">        archive_path (Optional[str]): Path to a NumPy file where the</span>
+<span class="sd">            transformed data will be archived.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: If the CSV file or load path is not found,</span>
+<span class="sd">            or if the directory for the archive path does not exist.</span>
+<span class="sd">        PermissionError: If there is no write access to the directory</span>
+<span class="sd">            for the archive path.</span>
+<span class="sd">        ValueError: If an invalid device is used for sentence transformation</span>
+<span class="sd">            or the CSV file does not contain the required headers.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: NumPy array containing the transformed sentence embeddings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load data based on provided path or preprocess the data</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">load_path</span><span class="p">:</span>
+        
+        <span class="c1"># Check if the CSV path points to a valid file</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">csv_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CSV file &#39;</span><span class="si">{</span><span class="n">csv_path</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Accepted device types</span>
+        <span class="n">accepted_devices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="s1">&#39;ipu&#39;</span><span class="p">,</span> <span class="s1">&#39;xpu&#39;</span><span class="p">,</span> <span class="s1">&#39;mkldnn&#39;</span><span class="p">,</span> <span class="s1">&#39;opengl&#39;</span><span class="p">,</span> <span class="s1">&#39;opencl&#39;</span><span class="p">,</span> <span class="s1">&#39;ideep&#39;</span><span class="p">,</span> <span class="s1">&#39;hip&#39;</span><span class="p">,</span> <span class="s1">&#39;ve&#39;</span><span class="p">,</span> <span class="s1">&#39;fpga&#39;</span><span class="p">,</span> <span class="s1">&#39;ort&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;xla&#39;</span><span class="p">,</span> <span class="s1">&#39;lazy&#39;</span><span class="p">,</span> <span class="s1">&#39;vulkan&#39;</span><span class="p">,</span> <span class="s1">&#39;mps&#39;</span><span class="p">,</span> <span class="s1">&#39;meta&#39;</span><span class="p">,</span> <span class="s1">&#39;hpu&#39;</span><span class="p">,</span> <span class="s1">&#39;mtia&#39;</span><span class="p">,</span> <span class="s1">&#39;privateuseone&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Check if the provided device is in the accepted list</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">accepted_devices</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid device type &#39;</span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&#39;. Accepted device types are: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">accepted_devices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+        <span class="n">data</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
+        <span class="n">st_data</span> <span class="o">=</span> <span class="n">sentence_transform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;load_path&#39; must be a string representing the file path if provided.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">load_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File at load path &#39;</span><span class="si">{</span><span class="n">load_path</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        <span class="n">st_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">load_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="c1"># Check if archive_path exists and if its directory is writable if provided</span>
+        <span class="n">archive_np_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">st_data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">st_data</span></div>
+
+
+
+<div class="viewcode-block" id="run_dimension_reduction">
+<a class="viewcode-back" href="../api.html#caller.run_dimension_reduction">[docs]</a>
+<span class="k">def</span> <span class="nf">run_dimension_reduction</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">st_embeddings</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">param_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs dimensionality reduction on sentence embeddings and appends the reduced dimensions to a table.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (Union[pd.DataFrame, str]): Either a Pandas DataFrame containing the data</span>
+<span class="sd">            or a string representing the path to a CSV file containing the data.</span>
+<span class="sd">        st_embeddings (Union[np.ndarray, str]): Either a NumPy array of sentence embeddings</span>
+<span class="sd">            or a string representing the path to a NumPy file containing the embeddings.</span>
+<span class="sd">        param_dict (Dict[str, Union[int, float]]): A dictionary containing the parameters</span>
+<span class="sd">            for the dimension reduction algorithm.</span>
+<span class="sd">        seed (int, optional): Random seed for reproducibility. Defaults to 42.</span>
+<span class="sd">        archive_path (str, optional): Path to a CSV file where the resulting table will be archived.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The original table with two additional columns: &#39;DATA_X&#39; and &#39;DATA_Y&#39;</span>
+<span class="sd">            containing the reduced dimensions.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types.</span>
+<span class="sd">        FileNotFoundError: If the archive path directory does not exist.</span>
+<span class="sd">        PermissionError: If there is no write access to the archive path directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load the table if a path is provided</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="c1"># If st_embeddings is a string, assume it&#39;s a path and load the object</span>
+    <span class="n">st_embeddings</span> <span class="o">=</span> <span class="n">to_ndarray</span><span class="p">(</span><span class="n">st_embeddings</span><span class="p">)</span>
+
+    <span class="c1"># Check if param_dict is a dictionary</span>
+    <span class="n">param_dict</span> <span class="o">=</span> <span class="n">to_dict</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>
+
+    <span class="c1"># Ensure seed is a positive integer</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">seed</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;seed&#39; must be a positive integer.&quot;</span><span class="p">)</span>
+
+    <span class="n">umap_data</span> <span class="o">=</span> <span class="n">dimension_reduction</span><span class="p">(</span><span class="n">st_embeddings</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">DATA_X</span><span class="o">=</span><span class="n">umap_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>\
+                 <span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">DATA_Y</span><span class="o">=</span><span class="n">umap_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Check if archive_path exists and if its directory is writable if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+
+<div class="viewcode-block" id="run_clustering">
+<a class="viewcode-back" href="../api.html#caller.run_clustering">[docs]</a>
+<span class="k">def</span> <span class="nf">run_clustering</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">param_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs clustering on dimensionally reduced data and appends the cluster labels to a table.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (Union[pd.DataFrame, str]): Either a Pandas DataFrame containing the data</span>
+<span class="sd">            or a string representing the path to a CSV file containing the data.</span>
+<span class="sd">        param_dict (Dict[str, Union[int, float]]): A dictionary containing the parameters for the clustering algorithm.</span>
+<span class="sd">        archive_path (str, optional): Path to a CSV file where the resulting table will be archived.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The original table with an additional column &#39;CLUSTERS&#39; containing the assigned cluster labels.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types.</span>
+<span class="sd">        FileNotFoundError: If the archive path directory does not exist.</span>
+<span class="sd">        PermissionError: If there is no write access to the archive path directory.</span>
+<span class="sd">        IOError: If the required columns are not present in the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">table</span><span class="p">[[</span><span class="s1">&#39;DATA_X&#39;</span><span class="p">,</span> <span class="s1">&#39;DATA_Y&#39;</span><span class="p">]]</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;UMAP Data must be a columns in &#39;table&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;Call &#39;run_dimension_reduction&#39; before using this function&quot;</span><span class="p">)</span>
+
+    <span class="n">umap_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;DATA_X&#39;</span><span class="p">],</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;DATA_Y&#39;</span><span class="p">])))</span>
+
+    <span class="c1"># Check if param_dict is a dictionary</span>
+    <span class="n">param_dict</span> <span class="o">=</span> <span class="n">to_dict</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">clustering</span><span class="p">(</span><span class="n">umap_data</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">CLUSTERS</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+
+<div class="viewcode-block" id="run_optimizer">
+<a class="viewcode-back" href="../api.html#caller.run_optimizer">[docs]</a>
+<span class="k">def</span> <span class="nf">run_optimizer</span><span class="p">(</span>
+        <span class="n">st_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">trials</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs hyperparameter optimization for a model using sentence embeddings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        st_data (Union[np.ndarray, str]): Either a NumPy array of sentence embeddings</span>
+<span class="sd">            or a string representing the path to a NumPy file containing the embeddings.</span>
+<span class="sd">        seed (int, optional): Random seed for reproducibility. Defaults to 42.</span>
+<span class="sd">        trials (int, optional): Number of optimization trials to run. Defaults to 50.</span>
+<span class="sd">        archive_path (str, optional): Path to a NumPy file where the optimized parameters will be archived.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, Union[int, float]]: A dictionary containing the optimized hyperparameters.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types.</span>
+<span class="sd">        FileNotFoundError: If the archive path directory does not exist.</span>
+<span class="sd">        PermissionError: If there is no write access to the archive path directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># checks if st_data is a path to a ndarray and retrieves it</span>
+    <span class="n">st_data</span> <span class="o">=</span> <span class="n">to_ndarray</span><span class="p">(</span><span class="n">st_data</span><span class="p">)</span>
+
+    <span class="c1"># Ensure seed is an integer</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">seed</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;seed&#39; must be a positive integer.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Ensure trials is a positive integer</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trials</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">trials</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;trials&#39; must be a positive integer.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Perform optimization</span>
+    <span class="n">optimized_params</span> <span class="o">=</span> <span class="n">optimize_hyperparameters</span><span class="p">(</span><span class="n">st_data</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">trials</span><span class="p">)</span>
+
+    <span class="c1"># Save optimized results if archive_path is provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_dict</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">optimized_params</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">optimized_params</span></div>
+
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Analysis Functions</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="c1"># modifies the original dataset to include</span>
+<span class="c1"># cluster and outlier labels</span>
+<div class="viewcode-block" id="report_outliers">
+<a class="viewcode-back" href="../api.html#caller.report_outliers">[docs]</a>
+<span class="k">def</span> <span class="nf">report_outliers</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates outlier density for each cluster in a table and appends it as a new column.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (pd.DataFrame): Pandas DataFrame containing cluster labels in a column named &#39;CLUSTERS&#39;</span>
+<span class="sd">            and outlier indicators in a column named &#39;HWRMA&#39;.</span>
+<span class="sd">        archive_path (str, optional): Path to a CSV file where the resulting table will be archived.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The original table with an additional column &#39;OUTLIER_DENSITY&#39; containing</span>
+<span class="sd">            the calculated outlier density for each cluster.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types.</span>
+<span class="sd">        FileNotFoundError: If the archive path directory does not exist.</span>
+<span class="sd">        PermissionError: If there is no write access to the archive path directory.</span>
+<span class="sd">        IOError: If the &#39;CLUSTERS&#39; column is not present in the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if table is a DataFrame or a string representing the file path</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="c1"># Check if &#39;CLUSTERS&#39; column exists</span>
+    <span class="k">if</span> <span class="s1">&#39;CLUSTERS&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Cluster Labels must be a column in &#39;table&#39;. Call &#39;run_clustering&#39; before using this function.&quot;</span><span class="p">)</span>
+
+	<span class="c1"># Calculate outlier density for each cluster</span>
+    <span class="c1"># for each cluster:</span>
+    <span class="c1"># find the ratio of Trues to Falses in the HWRMA column</span>
+    <span class="c1"># that ratio is the density of outliers in that group</span>
+    <span class="c1"># save that value in the table</span>
+    <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;CLUSTERS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
+        <span class="n">hwrma_column</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">CLUSTERS</span> <span class="o">==</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;HWRMA&quot;</span><span class="p">]</span>
+        <span class="n">outlier_ratio</span> <span class="o">=</span> <span class="n">hwrma_column</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">CLUSTERS</span> <span class="o">==</span> <span class="n">label</span><span class="p">,</span> <span class="s1">&#39;OUTLIER_DENSITY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outlier_ratio</span>
+
+	<span class="c1"># Save results to archive path if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+
+<span class="c1"># takes the dataset and a number of clusters as input</span>
+<span class="c1"># outputs a dataframe containing all the components unique to those clusters</span>
+<span class="c1"># &quot;num_clusters&quot; can at most be the total number of clusters in the dataset</span>
+<div class="viewcode-block" id="suspect_components">
+<a class="viewcode-back" href="../api.html#caller.suspect_components">[docs]</a>
+<span class="k">def</span> <span class="nf">suspect_components</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">num_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identifies potential component suspects based on cluster analysis and outlier density.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (pd.DataFrame): Pandas DataFrame containing:</span>
+<span class="sd">            - A column named &#39;CLUSTERS&#39; with cluster labels.</span>
+<span class="sd">            - A column named &#39;OUTLIER_DENSITY&#39; calculated by `report_outliers`.</span>
+<span class="sd">            - Any additional component information used for grouping by `group_components`.</span>
+<span class="sd">        num_clusters (int): Maximum number of clusters to consider as potential sources of suspects.</span>
+<span class="sd">        archive_path (str, optional): Path to a CSV file where the identified suspects will be archived.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing potential suspects, identified as components</span>
+<span class="sd">            in clusters with high outlier density and not present in clusters with lower density.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If `num_clusters` is less than 1 or greater than the number of unique clusters.</span>
+<span class="sd">            or the inputs are not of the expected types.</span>
+<span class="sd">        FileNotFoundError: If the archive path directory does not exist.</span>
+<span class="sd">        PermissionError: If there is no write access to the archive path directory.</span>
+<span class="sd">        IOError: If required columns (&#39;CLUSTERS&#39;, &#39;OUTLIER_DENSITY&#39;) are missing in the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+	<span class="c1"># Check if table is a DataFrame or a string representing the file path</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    
+    <span class="c1"># Check if &#39;CLUSTERS&#39; and &#39;OUTLIER_DENSITY&#39; columns exist</span>
+    <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CLUSTERS&#39;</span><span class="p">,</span> <span class="s1">&#39;OUTLIER_DENSITY&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">col</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">required_columns</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Required columns (&#39;CLUSTERS&#39;, &#39;OUTLIER_DENSITY&#39;) are missing in the table. Check that you are providing report_outliers output&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if num_clusters is at least 1</span>
+    <span class="k">if</span> <span class="n">num_clusters</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;num_clusters&#39; must be at least 1.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># sort the table so the cluster with the highest outlier density is at the top</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OUTLIER_DENSITY&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># create a list of all the unique cluster labels</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;CLUSTERS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+    <span class="n">cluster_limit</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">num_clusters</span><span class="p">)</span>
+
+    <span class="c1"># outliers are the components from the cluster with the highest error rate</span>
+    <span class="n">outliers</span> <span class="o">=</span> <span class="n">group_components</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">labels</span><span class="p">[:</span><span class="n">cluster_limit</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># inliers are the components from all other clusters</span>
+    <span class="n">inliers</span> <span class="o">=</span> <span class="n">group_components</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">labels</span><span class="p">[</span><span class="n">cluster_limit</span><span class="p">:])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># unique contains the components from outliers that are not also in inliers</span>
+    <span class="n">unique</span> <span class="o">=</span> <span class="n">outliers</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">inliers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">indicator</span><span class="o">=</span><span class="s1">&#39;set&#39;</span><span class="p">)</span>
+    <span class="n">unique</span> <span class="o">=</span> <span class="n">unique</span><span class="p">[</span><span class="n">unique</span><span class="o">.</span><span class="n">set</span> <span class="o">==</span> <span class="s1">&#39;left_only&#39;</span><span class="p">]</span>
+    <span class="n">unique</span> <span class="o">=</span> <span class="n">unique</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;set&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># archive them to a csv</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">unique</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">unique</span></div>
+
+
+
+<span class="c1"># returns the row from the table with a given serial number</span>
+<div class="viewcode-block" id="find_sernum">
+<a class="viewcode-back" href="../api.html#caller.find_sernum">[docs]</a>
+<span class="k">def</span> <span class="nf">find_sernum</span><span class="p">(</span>
+        <span class="n">sernum</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+		<span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the row in the table with a specified serial number.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sernum (str): The serial number to search for.</span>
+<span class="sd">        table (pd.DataFrame): The DataFrame to search within.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing the row with the matching serial number,</span>
+<span class="sd">            or an empty DataFrame if no match is found.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if sernum is a non-empty string</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sernum</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">sernum</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;sernum&#39; must be a non-empty string.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if table is a DataFrame or a string representing the file path</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    
+    <span class="c1"># Filter table for entry</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;SERNUM&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sernum</span><span class="p">]</span>
+    
+	<span class="c1"># Check if the entry was found</span>
+    <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No entry found for serial number &#39;</span><span class="si">{</span><span class="n">sernum</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    
+	<span class="c1"># Check if archive_path exists and if its directory is writable if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">entry</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">entry</span></div>
+
+
+
+<span class="c1"># returns all rows from the table with a given cluster label</span>
+<div class="viewcode-block" id="find_cluster">
+<a class="viewcode-back" href="../api.html#caller.find_cluster">[docs]</a>
+<span class="k">def</span> <span class="nf">find_cluster</span><span class="p">(</span>
+        <span class="n">cluster</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds all rows in the table with a specified cluster label.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cluster (int): The cluster label to filter by.</span>
+<span class="sd">        table (pd.DataFrame): The DataFrame to search within.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing all rows with the matching cluster label.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+	<span class="c1"># Check if table is a DataFrame or a string representing the file path</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    
+	<span class="c1"># Filter table for entry</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;CLUSTERS&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">cluster</span><span class="p">]</span>
+    
+	<span class="c1"># Check if the entry was found</span>
+    <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No entry found for cluster &#39;</span><span class="si">{</span><span class="n">cluster</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    
+	<span class="c1"># Check if archive_path exists and if its directory is writable if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">entry</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">entry</span></div>
+
+
+
+<span class="c1"># returns all rows from the table matching the cluster label for a serial number</span>
+<div class="viewcode-block" id="find_cluster_by_unit">
+<a class="viewcode-back" href="../api.html#caller.find_cluster_by_unit">[docs]</a>
+<span class="k">def</span> <span class="nf">find_cluster_by_unit</span><span class="p">(</span>
+        <span class="n">sernum</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds all rows in the table that belong to the same cluster as a specified serial number.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sernum (str): The serial number to identify the cluster.</span>
+<span class="sd">        table (pd.DataFrame): The DataFrame to search within.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing all rows belonging to the same cluster as the specified serial number.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if sernum is a non-empty string</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sernum</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">sernum</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;sernum&#39; must be a non-empty string.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if table is a DataFrame or a string representing the file path</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    
+    <span class="n">cluster_label</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;SERNUM&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sernum</span><span class="p">][</span><span class="s1">&#39;CLUSTERS&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="c1"># Filter table for entry</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;CLUSTERS&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">cluster_label</span><span class="p">]</span>
+    
+	<span class="c1"># Check if the entry was found</span>
+    <span class="k">if</span> <span class="n">entries</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cluster label &#39;</span><span class="si">{</span><span class="n">cluster_label</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+    
+	<span class="c1"># Check if archive_path exists and if its directory is writable if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">entries</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">entries</span></div>
+
+
+
+<span class="c1"># get the n best neighbors in the dimension-reduced set, based on distance</span>
+<div class="viewcode-block" id="find_neighbors">
+<a class="viewcode-back" href="../api.html#caller.find_neighbors">[docs]</a>
+<span class="k">def</span> <span class="nf">find_neighbors</span><span class="p">(</span>
+        <span class="n">sernum</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">n_neighbors</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the n closest neighbors to a specified serial number in the dimension-reduced space.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sernum (str): The serial number to find neighbors for.</span>
+<span class="sd">        table (pd.DataFrame): The DataFrame containing dimensionally reduced data.</span>
+<span class="sd">        n_neighbors (int): The number of neighbors to retrieve.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing the num closest neighbors to the specified serial number.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types or n_neighbors &lt; 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if num is at least 0</span>
+    <span class="k">if</span> <span class="n">n_neighbors</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;num&#39; must be at least 0.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if table is a DataFrame or a string representing the file path</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">find_sernum</span><span class="p">(</span><span class="n">sernum</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">table</span><span class="p">[[</span><span class="s1">&#39;DISTANCE&#39;</span><span class="p">]]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">DISTANCE</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">part</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">DATA_X</span> <span class="o">-</span> <span class="n">ref</span><span class="o">.</span><span class="n">DATA_X</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">pow</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">DATA_Y</span> <span class="o">-</span> <span class="n">ref</span><span class="o">.</span><span class="n">DATA_Y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;DISTANCE&#39;</span><span class="p">)</span>
+	
+	<span class="c1"># Filter table for neighbors</span>
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="n">table</span><span class="p">[:</span><span class="n">n_neighbors</span><span class="p">]</span>
+    
+	<span class="c1"># Check if the neighbors were found</span>
+    <span class="k">if</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Neighbors &#39;</span><span class="si">{</span><span class="n">neighbors</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+    
+	<span class="c1"># Check if archive_path exists and if its directory is writable if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">neighbors</span></div>
+
+
+
+<div class="viewcode-block" id="filter_for_anomalies">
+<a class="viewcode-back" href="../api.html#caller.filter_for_anomalies">[docs]</a>
+<span class="k">def</span> <span class="nf">filter_for_anomalies</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters a dataset to include only rows marked as anomalies.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (Union[pd.DataFrame, str]): Either a Pandas DataFrame containing the data</span>
+<span class="sd">            or a string representing the path to a CSV file containing the data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing only the rows where the &#39;HWRMA&#39; column is True,</span>
+<span class="sd">            indicating known anomalies.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input is the wrong type or missing necessary columns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+	<span class="c1"># Filter table for anomalies</span>
+    <span class="n">anomalies</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;HWRMA&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>
+    
+	<span class="c1"># Check if the anomalies were found</span>
+    <span class="k">if</span> <span class="n">anomalies</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Anomalies &#39;</span><span class="si">{</span><span class="n">anomalies</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+    
+	<span class="c1"># Check if archive_path exists and if its directory is writable if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">anomalies</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">anomalies</span></div>
+
+
+<span class="c1"># returns the row from the table with a given serial number</span>
+<span class="k">def</span> <span class="nf">filter_by_column</span><span class="p">(</span>
+        <span class="n">column_filter</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters input digest to list only the specified properties for each part</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        column_filter (List[str]): The columns that must persist after culling.</span>
+<span class="sd">        table (pd.DataFrame): The DataFrame to filter.</span>
+<span class="sd">        archive_path (str, optional): Path to a CSV file where the filtered DataFrame will be archived.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A DataFrame containing filtered part data for each part in the input set.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the inputs are not of the expected types or if the column_filter contains non-existent columns.</span>
+<span class="sd">        FileNotFoundError: If the directory for the archive file does not exist.</span>
+<span class="sd">        PermissionError: If there is no write access to the archive path directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if table is a DataFrame or a string representing the file path</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="c1"># Check if columns_filter is a non-empty list of strings</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_filter</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_filter</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input &#39;column_filter&#39; must be a non-empty list of strings.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if columns in column_filter exist in the table</span>
+    <span class="n">missing_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_filter</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">missing_columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column(s) </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_columns</span><span class="p">)</span><span class="si">}</span><span class="s2"> do(es) not exist in the table.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Filter table for specified part properties</span>
+    <span class="n">filtered_table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column_filter</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Archive the filtered DataFrame to a CSV file if archive_path is provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">filtered_table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filtered_table</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Graphing Functions</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="plot_clusters">
+<a class="viewcode-back" href="../api.html#caller.plot_clusters">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_clusters</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a plot of data points colored by their cluster labels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (pd.DataFrame): A DataFrame containing columns named &#39;DATA_X&#39;, &#39;DATA_Y&#39;, and &#39;CLUSTERS&#39;,</span>
+<span class="sd">            representing the dimensionally reduced data and cluster assignments.</span>
+<span class="sd">        archive_path (str, optional): Path to a file where an image of the plot will be archived.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input is the wrong type</span>
+<span class="sd">        IOError: If the required columns are not present in the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">table</span><span class="p">[[</span><span class="s1">&#39;DATA_X&#39;</span><span class="p">,</span> <span class="s1">&#39;DATA_Y&#39;</span><span class="p">,</span> <span class="s1">&#39;CLUSTERS&#39;</span><span class="p">]]</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Cluster Labels and UMAP Data must be a columns in &#39;table&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+					  <span class="s2">&quot;Call &#39;run_dimension_reduction&#39; and &#39;run_clustering&#39; before using this function&quot;</span><span class="p">)</span>
+
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;DATA_X&#39;</span><span class="p">],</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;DATA_Y&#39;</span><span class="p">])))</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;CLUSTERS&#39;</span><span class="p">]</span>
+
+    <span class="n">plot_labeled_data</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;BoM Clusters&quot;</span><span class="p">,</span> <span class="n">archive_path</span><span class="p">)</span></div>
+
+    
+
+<div class="viewcode-block" id="plot_hwrma">
+<a class="viewcode-back" href="../api.html#caller.plot_hwrma">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_hwrma</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">archive_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a plot of data points colored by their HWRMA (anomaly) status.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (pd.DataFrame): A DataFrame containing columns named &#39;DATA_X&#39;, &#39;DATA_Y&#39;, and &#39;HWRMA&#39;,</span>
+<span class="sd">            representing the dimensionally reduced data and HWRMA labels.</span>
+<span class="sd">        archive_path (str, optional): Path to a file where an image of the plot will be archived.</span>
+
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input is the wrong type</span>
+<span class="sd">        IOError: If the required columns are not present in the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">to_dataframe</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">table</span><span class="p">[[</span><span class="s1">&#39;DATA_X&#39;</span><span class="p">,</span> <span class="s1">&#39;DATA_Y&#39;</span><span class="p">,</span> <span class="s1">&#39;HWRMA&#39;</span><span class="p">]]</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Input &#39;table&#39; must have &#39;HWRMA&#39; column and UMAP Data.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                      <span class="s2">&quot;Call &#39;run_dimension_reduction&#39; before using this function&quot;</span><span class="p">)</span>
+    
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;DATA_X&#39;</span><span class="p">],</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;DATA_Y&#39;</span><span class="p">])))</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;HWRMA&#39;</span><span class="p">]</span>
+    <span class="n">plot_labeled_data</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;BoM HWRMA labels&quot;</span><span class="p">,</span> <span class="n">archive_path</span><span class="p">)</span></div>
+
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Util Functions</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">to_ndarray</span><span class="p">(</span>
+        <span class="n">np_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures that the input is a NumPy array, either by loading it from a file or</span>
+<span class="sd">    directly using the provided array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        np_data (Union[str, np.ndarray]): A NumPy array or a string representing the path to a NumPy array file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The NumPy array.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input is not a NumPy array or a string representing a file path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">np_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Load the array if a path is provided</span>
+        <span class="n">np_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">np_data</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">np_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">np_data</span> <span class="o">=</span> <span class="n">np_data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a NumPy array or a string representing the file path.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np_data</span>
+
+
+<span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span>
+        <span class="n">pd_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures that the input is a pandas DataFrame, either by loading it from a CSV file or</span>
+<span class="sd">    directly using the provided DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pd_data (Union[str, pd.DataFrame]): A pandas DataFrame or a string representing the path to a CSV file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The pandas DataFrame.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input is not a pandas DataFrame or a string representing a file path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pd_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Load the table if a path is provided</span>
+        <span class="n">pd_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">pd_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pd_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a Pandas DataFrame or a string representing the file path.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pd_data</span>
+
+<span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span>
+        <span class="n">dict_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures that the input is a pandas DataFrame, either by loading it from a CSV file or</span>
+<span class="sd">    directly using the provided DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pd_data (Union[str, pd.DataFrame]): A pandas DataFrame or a string representing the path to a CSV file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The pandas DataFrame.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input is not a pandas DataFrame or a string representing a file path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Load the table if a path is provided</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dict_data</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dict_file</span><span class="p">:</span>
+            <span class="n">dict_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dict_file</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a Dictionary or a string representing the file path.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dict_data</span>
+
+<div class="viewcode-block" id="combine_boms">
+<a class="viewcode-back" href="../api.html#caller.combine_boms">[docs]</a>
+<span class="k">def</span> <span class="nf">combine_boms</span><span class="p">(</span>
+        <span class="n">bom_path_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">bom_path_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">archive_path</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combines two CSV files containing bill of materials (BOMs) into a single DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bom_path_1 (str): The path to the first BOM CSV file.</span>
+<span class="sd">        bom_path_2 (str): The path to the second BOM CSV file.</span>
+<span class="sd">        archive_path (str, optional): The path to save the combined BOM data. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: A pandas DataFrame containing the combined BOM data.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: If either of the specified CSV files does not exist.</span>
+<span class="sd">        ValueError: If either of the CSV files does not contain the required headers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if the CSV paths point to valid files</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bom_path_1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CSV file &#39;</span><span class="si">{</span><span class="n">bom_path_1</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bom_path_2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CSV file &#39;</span><span class="si">{</span><span class="n">bom_path_2</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+    
+
+    <span class="c1"># Check if CSV files contain the appropriate headers</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">bom_path_1</span><span class="p">,</span> <span class="s2">&quot;First BOM file&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">bom_path_2</span><span class="p">,</span> <span class="s2">&quot;Second BOM file&quot;</span><span class="p">)]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SERNUM&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CSV file &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39; does not contain the required headers: [&#39;SERNUM&#39;]&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Read both CSV files and concatenate them</span>
+    <span class="n">combined_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">bom_path_1</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">bom_path_2</span><span class="p">)])</span>
+    
+    <span class="c1"># Save combined data to archive_path if provided</span>
+    <span class="k">if</span> <span class="n">archive_path</span><span class="p">:</span>
+        <span class="n">archive_pd_data</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="n">combined_data</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">combined_data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BoM Squad.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

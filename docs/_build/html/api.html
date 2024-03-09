@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; BoM Analyzer 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Helper Functions" href="helper.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BoM Analyzer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#processing-functions">Processing Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.run_sentence_transform"><code class="docutils literal notranslate"><span class="pre">run_sentence_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.run_dimension_reduction"><code class="docutils literal notranslate"><span class="pre">run_dimension_reduction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.run_clustering"><code class="docutils literal notranslate"><span class="pre">run_clustering()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.run_optimizer"><code class="docutils literal notranslate"><span class="pre">run_optimizer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis-functions">Analysis Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.label_outliers"><code class="docutils literal notranslate"><span class="pre">label_outliers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.report_outliers"><code class="docutils literal notranslate"><span class="pre">report_outliers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.report_suspect_components"><code class="docutils literal notranslate"><span class="pre">report_suspect_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.report_suspect_units"><code class="docutils literal notranslate"><span class="pre">report_suspect_units()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.find_sernum"><code class="docutils literal notranslate"><span class="pre">find_sernum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.find_cluster"><code class="docutils literal notranslate"><span class="pre">find_cluster()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.find_cluster_by_sernum"><code class="docutils literal notranslate"><span class="pre">find_cluster_by_sernum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.find_neighbors"><code class="docutils literal notranslate"><span class="pre">find_neighbors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.find_differences"><code class="docutils literal notranslate"><span class="pre">find_differences()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#filter-functions">Filter Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_for_HWRMA"><code class="docutils literal notranslate"><span class="pre">filter_for_HWRMA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_column_header"><code class="docutils literal notranslate"><span class="pre">filter_by_column_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_PCA"><code class="docutils literal notranslate"><span class="pre">filter_by_PCA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_CPN"><code class="docutils literal notranslate"><span class="pre">filter_by_CPN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_DateCode"><code class="docutils literal notranslate"><span class="pre">filter_by_DateCode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_LOTCODE"><code class="docutils literal notranslate"><span class="pre">filter_by_LOTCODE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_MPN"><code class="docutils literal notranslate"><span class="pre">filter_by_MPN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_RD"><code class="docutils literal notranslate"><span class="pre">filter_by_RD()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.filter_by_Util"><code class="docutils literal notranslate"><span class="pre">filter_by_Util()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#graphing-functions">Graphing Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.plot_clusters"><code class="docutils literal notranslate"><span class="pre">plot_clusters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.plot_hwrma"><code class="docutils literal notranslate"><span class="pre">plot_hwrma()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#util-functions">Util Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.to_dataframe"><code class="docutils literal notranslate"><span class="pre">to_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.to_ndarray"><code class="docutils literal notranslate"><span class="pre">to_ndarray()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bom_analyzer.caller.combine_boms"><code class="docutils literal notranslate"><span class="pre">combine_boms()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helper.html">Helper Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BoM Analyzer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<section id="processing-functions">
+<h2>Processing Functions<a class="headerlink" href="#processing-functions" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.run_sentence_transform">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">run_sentence_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#run_sentence_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.run_sentence_transform" title="Link to this definition"></a></dt>
+<dd><p>Performs sentence-level semantic similarity analysis on data from a CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>csv_path</strong> (<em>str</em>) – Path to the CSV file containing the data.
+Required headers: ‘SERNUM’,’PCA’,’CPN_1’,’DateCode_1’,’LOTCODE_1’,’MPN_1’,’RD_1’, ‘HWRMA’.</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Device to use for sentence transformation. Defaults to ‘cpu’.</p></li>
+<li><p><strong>load_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a NumPy file containing archived
+data to load instead of preprocessing.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a NumPy file where the
+transformed data will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – If the CSV file or load path is not found,
+    or if the directory for the archive path does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the directory
+    for the archive path.</p></li>
+<li><p><strong>ValueError</strong> – If an invalid device is used for sentence transformation
+    or the CSV file does not contain the required headers.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NumPy array containing the transformed sentence embeddings.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.run_dimension_reduction">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">run_dimension_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st_embeddings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#run_dimension_reduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.run_dimension_reduction" title="Link to this definition"></a></dt>
+<dd><p>Performs dimensionality reduction on sentence embeddings and appends the reduced dimensions to a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – Either a Pandas DataFrame containing the data
+or a string representing the path to a CSV file containing the data.</p></li>
+<li><p><strong>st_embeddings</strong> (<em>Union</em><em>[</em><em>np.ndarray</em><em>, </em><em>str</em><em>]</em>) – Either a NumPy array of sentence embeddings
+or a string representing the path to a NumPy file containing the embeddings.</p></li>
+<li><p><strong>param_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em><em>]</em>) – A dictionary containing the parameters
+for the dimension reduction algorithm.</p></li>
+<li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Random seed for reproducibility. Defaults to 42.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the resulting table will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The original table with two additional columns: ‘DATA_X’ and ‘DATA_Y’</dt><dd><p>containing the reduced dimensions.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the archive path directory does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.run_clustering">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">run_clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#run_clustering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.run_clustering" title="Link to this definition"></a></dt>
+<dd><p>Performs clustering on dimensionally reduced data and appends the cluster labels to a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – Either a Pandas DataFrame containing the data
+or a string representing the path to a CSV file containing the data.</p></li>
+<li><p><strong>param_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em><em>]</em>) – A dictionary containing the parameters for the clustering algorithm.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the resulting table will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The original table with an additional column ‘CLUSTERS’ containing the assigned cluster labels.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the archive path directory does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+<li><p><strong>IOError</strong> – If the required columns are not present in the table.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.run_optimizer">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">run_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">st_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#run_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.run_optimizer" title="Link to this definition"></a></dt>
+<dd><p>Performs hyperparameter optimization for a model using sentence embeddings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>st_data</strong> (<em>Union</em><em>[</em><em>np.ndarray</em><em>, </em><em>str</em><em>]</em>) – Either a NumPy array of sentence embeddings
+or a string representing the path to a NumPy file containing the embeddings.</p></li>
+<li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Random seed for reproducibility. Defaults to 42.</p></li>
+<li><p><strong>trials</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Number of optimization trials to run. Defaults to 50.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a NumPy file where the optimized parameters will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the optimized hyperparameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Union[int, float]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the archive path directory does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="analysis-functions">
+<h2>Analysis Functions<a class="headerlink" href="#analysis-functions" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.label_outliers">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">label_outliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#label_outliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.label_outliers" title="Link to this definition"></a></dt>
+<dd><p>Calculates outlier density for each cluster in a table and appends it as a new column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – Pandas DataFrame containing cluster labels in a column named ‘CLUSTERS’
+and outlier indicators in a column named ‘HWRMA’.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the resulting table will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The original table with an additional column ‘OUTLIER_DENSITY’ containing</dt><dd><p>the calculated outlier density for each cluster.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the archive path directory does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+<li><p><strong>IOError</strong> – If the ‘CLUSTERS’ column is not present in the table.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.report_outliers">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">report_outliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#report_outliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.report_outliers" title="Link to this definition"></a></dt>
+<dd><p>Filters outliers based on a specified outlier density threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – Either a Pandas DataFrame containing the data
+or a string representing the path to a CSV file containing the data.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – The threshold above which outliers will be reported.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame containing outliers that exceed the specified outlier density threshold.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the inputs are not of the expected types or threshold is not between 0 and 1.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.report_suspect_components">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">report_suspect_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#report_suspect_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.report_suspect_components" title="Link to this definition"></a></dt>
+<dd><p>Identifies potential component suspects based on cluster analysis and outlier density.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – Pandas DataFrame (or path to it) containing:
+- A column named ‘CLUSTERS’ with cluster labels.
+- A column named ‘OUTLIER_DENSITY’ calculated by <cite>report_outliers</cite>.
+- Any additional component information used for grouping by <cite>group_components</cite>.</p></li>
+<li><p><strong>num_clusters</strong> (<em>int</em>) – Maximum number of clusters to consider as potential sources of suspects.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the identified suspects will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A DataFrame containing potential suspects, identified as components</dt><dd><p>in clusters with high outlier density and not present in clusters with lower density.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If <cite>num_clusters</cite> is less than 1 or greater than the number of unique clusters.
+    or the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the archive path directory does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+<li><p><strong>IOError</strong> – If required columns (‘CLUSTERS’, ‘OUTLIER_DENSITY’) are missing in the table.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.report_suspect_units">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">report_suspect_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">suspect_components</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#report_suspect_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.report_suspect_units" title="Link to this definition"></a></dt>
+<dd><p>Filters the input table to include only the units containing the suspect components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>suspect_components</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – DataFrame containing suspect components
+or the file path to the suspect components table.</p></li>
+<li><p><strong>bom</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – DataFrame containing the Bill of Materials (BoM)
+or the file path to the BoM table.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered units will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered units DataFrame containing only the units containing the suspect components.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.find_sernum">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">find_sernum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sernum_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#find_sernum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.find_sernum" title="Link to this definition"></a></dt>
+<dd><p>Filters input table to include only the units containing the specified sernum values in the SERNUM column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sernum_values</strong> (<em>List</em>) – The list of sernum values to filter by.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified sernum value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.find_cluster">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">find_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#find_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.find_cluster" title="Link to this definition"></a></dt>
+<dd><p>Finds all rows in the table with a specified cluster label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_values</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – The cluster label(s) to filter by.</p></li>
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – The DataFrame to search within.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the DataFrame of
+all rows in the specified cluster will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame containing all rows with the matching cluster label.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.find_cluster_by_sernum">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">find_cluster_by_sernum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sernums</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#find_cluster_by_sernum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.find_cluster_by_sernum" title="Link to this definition"></a></dt>
+<dd><p>Finds all rows in the table that belong to the same cluster of the specified serial number(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sernums</strong> (<em>List</em>) – The serial number(s) to identify the cluster.</p></li>
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – The DataFrame to search within.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the DataFrame of
+all rows in the same cluster as the specified serial number will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame containing all rows belonging to the same cluster as the specified serial number.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.find_neighbors">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">find_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sernums</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#find_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.find_neighbors" title="Link to this definition"></a></dt>
+<dd><p>Finds the n closest neighbors to the specified serial number(s) in the dimension-reduced space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sernums</strong> (<em>List</em>) – The serial number(s) to find neighbors for.</p></li>
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – The DataFrame containing dimensionally reduced data.</p></li>
+<li><p><strong>n_neighbors</strong> (<em>int</em>) – The number of neighbors to retrieve.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the DataFrame of
+closest neighbors will be stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame containing the num closest neighbors to the specified serial number.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the inputs are not of the expected types or n_neighbors &lt; 0</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.find_differences">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">find_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sernum_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#find_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.find_differences" title="Link to this definition"></a></dt>
+<dd><p>Reduces list of parts to the differences between them. Removes identical columns.
+:param table: The DataFrame to examine, or a file path to that DataFrame.
+:type table: pd.DataFrame
+:param sernum_values: The set of serial number(s) from the table that will be checked.</p>
+<blockquote>
+<div><p>If None, the whole table will be checked.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the DataFrame of part differences will be archived.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame describing the differences between the entries in the set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types or if the column_filter contains non-existent columns.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="filter-functions">
+<h2>Filter Functions<a class="headerlink" href="#filter-functions" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_for_HWRMA">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_for_HWRMA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_for_HWRMA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_for_HWRMA" title="Link to this definition"></a></dt>
+<dd><p>Filters a dataset to include only rows marked as anomalies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – Either a Pandas DataFrame containing the data
+or a string representing the path to a CSV file containing the data.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the DataFrame of anomalies
+will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A DataFrame containing only the rows where the ‘HWRMA’ column is True,</dt><dd><p>indicating known anomalies.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input is the wrong type or missing necessary columns.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_column_header">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_column_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_column_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_column_header" title="Link to this definition"></a></dt>
+<dd><p>Filters input digest to list only the specified properties for each part</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_filter</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The columns that must persist after culling.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame containing filtered part data for each part in the input set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types or if the column_filter contains non-existent columns.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_PCA">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_PCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pca_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_PCA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_PCA" title="Link to this definition"></a></dt>
+<dd><p>Filters input table to include only the units containing the specified PCA value in the PCA column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pca_values</strong> (<em>List</em>) – The list of PCA values to filter by.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified PCA value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_CPN">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_CPN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cpn_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_CPN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_CPN" title="Link to this definition"></a></dt>
+<dd><p>Filters input table to include only the units containing the specified CPN value in any CPN_i column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cpn_values</strong> (<em>List</em>) – The list of CPN values to filter by.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified CPN value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_DateCode">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_DateCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datecode_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_DateCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_DateCode" title="Link to this definition"></a></dt>
+<dd><p>Filters input table to include only the units containing the specified DateCode value in any DateCode_i column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datecode_values</strong> (<em>List</em>) – The list of DateCode values to filter by.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified DateCode value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_LOTCODE">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_LOTCODE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lotcode_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_LOTCODE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_LOTCODE" title="Link to this definition"></a></dt>
+<dd><p>Filters input table to include only the units containing the specified LOTCODE value in any LOTCODE_i column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lotcode_values</strong> (<em>List</em>) – The list of LOTCODE values to filter by.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified LOTCODE value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_MPN">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_MPN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mpn_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_MPN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_MPN" title="Link to this definition"></a></dt>
+<dd><p>Filters input table to include only the units containing the specified MPN value in any MPN_i column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mpn_values</strong> (<em>List</em>) – The list of MPN values to filter by.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified MPN value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_RD">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_RD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rd_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_RD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_RD" title="Link to this definition"></a></dt>
+<dd><p>Filters input table to include only the units containing the specified RD value in any RD_i column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rd_values</strong> (<em>List</em>) – The list of RD values to filter by.</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified RD value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.filter_by_Util">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">filter_by_Util</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#filter_by_Util"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.filter_by_Util" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Filters input table to include only the units containing the specified values in any column</dt><dd><p>specified by the ‘header’ input</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header</strong> (<em>str</em>) – The columns whose values will be checked</p></li>
+<li><p><strong>values</strong> (<em>List</em>) – The list of values to check for</p></li>
+<li><p><strong>table</strong> (<em>Union</em><em>[</em><em>pd.DataFrame</em><em>, </em><em>str</em><em>]</em>) – The DataFrame or file path to the DataFrame to filter.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the filtered DataFrame will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only the units containing the specified MPN value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the inputs are not of the expected types.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the directory for the archive file does not exist.</p></li>
+<li><p><strong>PermissionError</strong> – If there is no write access to the archive path directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="graphing-functions">
+<h2>Graphing Functions<a class="headerlink" href="#graphing-functions" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.plot_clusters">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">plot_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#plot_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.plot_clusters" title="Link to this definition"></a></dt>
+<dd><p>Generates a plot of data points colored by their cluster labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – A DataFrame containing columns named ‘DATA_X’, ‘DATA_Y’, and ‘CLUSTERS’,
+representing the dimensionally reduced data and cluster assignments.</p></li>
+<li><p><strong>archive_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a file where an image of the plot will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the input is the wrong type</p></li>
+<li><p><strong>IOError</strong> – If the required columns are not present in the table.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.plot_hwrma">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">plot_hwrma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#plot_hwrma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.plot_hwrma" title="Link to this definition"></a></dt>
+<dd><p>Generates a plot of data points colored by their HWRMA (anomaly) status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – A DataFrame containing columns named ‘DATA_X’, ‘DATA_Y’, and ‘HWRMA’,
+representing the dimensionally reduced data and HWRMA labels.</p></li>
+<li><p><strong>archive_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a file where an image of the plot will be archived.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the input is the wrong type</p></li>
+<li><p><strong>IOError</strong> – If the required columns are not present in the table.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="util-functions">
+<h2>Util Functions<a class="headerlink" href="#util-functions" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.to_dataframe">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.to_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Ensures that the input is a pandas DataFrame, either by loading it from a CSV file or
+directly using the provided DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pd_data</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.DataFrame</em><em>]</em>) – A pandas DataFrame or a string representing the path to a CSV file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The pandas DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input is not a pandas DataFrame or a string representing a file path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.to_ndarray">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">to_ndarray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#to_ndarray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.to_ndarray" title="Link to this definition"></a></dt>
+<dd><p>Ensures that the input is a NumPy array, either by loading it from a file or
+directly using the provided array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>np_data</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>np.ndarray</em><em>]</em>) – A NumPy array or a string representing the path to a NumPy array file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The NumPy array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input is not a NumPy array or a string representing a file path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.to_dict">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Ensures that the input is a dictionary, either by loading it from a json file or
+directly using the provided dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dict_data</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Dict</em><em>]</em>) – A pandas DataFrame or a string representing the path to a CSV file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input is not a dictionary or a string representing a file path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bom_analyzer.caller.combine_boms">
+<span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">combine_boms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bom_path_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bom_path_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#combine_boms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.combine_boms" title="Link to this definition"></a></dt>
+<dd><p>Combines two CSV files containing bill of materials (BOMs) into a single DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bom_path_1</strong> (<em>str</em>) – The path to the first BOM CSV file.</p></li>
+<li><p><strong>bom_path_2</strong> (<em>str</em>) – The path to the second BOM CSV file.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The path to save the combined BOM data. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pandas DataFrame containing the combined BOM data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – If either of the specified CSV files does not exist.</p></li>
+<li><p><strong>ValueError</strong> – If either of the CSV files does not contain the required headers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="helper.html" class="btn btn-neutral float-right" title="Helper Functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BoM Squad.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
