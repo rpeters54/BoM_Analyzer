@@ -14,4 +14,4 @@ Installable via pip/pip3 using:
 
 Accessible via ReadTheDocs:
 
-> TBD
+> TBA
