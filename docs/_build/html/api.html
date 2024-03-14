@@ -483,16 +483,15 @@ closest neighbors will be stored.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="bom_analyzer.caller.find_differences">
 <span class="sig-prename descclassname"><span class="pre">bom_analyzer.caller.</span></span><span class="sig-name descname"><span class="pre">find_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sernum_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/bom_analyzer/caller.html#find_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bom_analyzer.caller.find_differences" title="Link to this definition"></a></dt>
-<dd><p>Reduces list of parts to the differences between them. Removes identical columns.
-:param table: The DataFrame to examine, or a file path to that DataFrame.
-:type table: pd.DataFrame
-:param sernum_values: The set of serial number(s) from the table that will be checked.</p>
-<blockquote>
-<div><p>If None, the whole table will be checked.</p>
-</div></blockquote>
+<dd><p>Reduces list of parts to the differences between them. Removes identical columns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the DataFrame of part differences will be archived.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – The DataFrame to examine, or a file path to that DataFrame.</p></li>
+<li><p><strong>sernum_values</strong> (<em>List</em>) – The set of serial number(s) from the table that will be checked.
+If None, the whole table will be checked.</p></li>
+<li><p><strong>archive_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Path to a CSV file where the DataFrame of part differences will be archived.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A DataFrame describing the differences between the entries in the set.</p>
